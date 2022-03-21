@@ -4,36 +4,55 @@ enum LetterResult {
   case correct, contained, incorrect
 }
 
-public func run() {
-  guard var words = wordList() else {
+public func run(numWords: Int = 1) {
+  guard let candidateWords = wordList() else {
     print("Unable to get words")
     return
   }
-  print("Loaded \(words.count) words")
+  print("Loaded \(candidateWords.count) words")
   
-  while words.count > 1 {
+  var words = [Set<String>](repeating: candidateWords, count: numWords)
+
+  while true {
     print("Enter guess", terminator: ": ")
     guard let guess = readLine() else { return }
-    print("Enter guess result", terminator: ": ")
-    guard let guessResultRaw = readLine() else { return }
-    let guessResult: [LetterResult] = guessResultRaw.compactMap { result in
-      switch result {
-      case "g":
-        return .correct
-      case "y":
-        return .contained
-      case "b":
-        return .incorrect
-      default:
-        return nil
-      }
+
+    for i in 0..<words.count {
+      print("Enter word \(i) guess result", terminator: ": ")
+      guard let guessResultRaw = readLine() else { return }
+      let guessResult = getGuessResult(from: guessResultRaw)
+      words[i] = prune(words: words[i], guess: guess, result: guessResult)
     }
-    words = prune(words: words, guess: guess, result: guessResult)
-    print("Possible words\n=====")
-    for word in words {
-      print(word)
+
+    print("Possible words")
+    print("=====")
+    let printWords = words.map(Array.init)
+    for rowInd in 0..<(words.map({$0.count}).max() ?? 0) {
+      for word in printWords {
+        if rowInd < word.count {
+          print(word[rowInd], terminator: " ")
+        } else {
+          print("     ", terminator: " ")
+        }
+      }
+      print()
     }
     print("=====")
+  }
+}
+
+func getGuessResult(from raw: String) -> [LetterResult] {
+  return raw.compactMap { result in
+    switch result {
+    case "g":
+      return .correct
+    case "y":
+      return .contained
+    case "b":
+      return .incorrect
+    default:
+      return nil
+    }
   }
 }
 

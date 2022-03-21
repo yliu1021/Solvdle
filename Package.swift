@@ -5,10 +5,16 @@ import PackageDescription
 
 let package = Package(
   name: "Solvdle",
+  dependencies: [
+    .package(url: "https://github.com/apple/swift-argument-parser", from: "1.1.1"),
+  ],
   targets: [
     .executableTarget(
       name: "SolvdleCLI",
-      dependencies: ["Solvdle"]
+      dependencies: [
+        "Solvdle",
+        .product(name: "ArgumentParser", package: "swift-argument-parser"),
+      ]
     ),
     .target(
       name: "Solvdle",

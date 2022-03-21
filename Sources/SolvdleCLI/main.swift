@@ -1,2 +1,13 @@
+import ArgumentParser
 import Solvdle
-Solvdle.run()
+
+struct SolvdleCLI: ParsableCommand {
+    @Argument()
+    var numWords: Int = 1
+
+    func run() {
+        Solvdle.run(numWords: self.numWords)
+    }
+}
+
+SolvdleCLI.main()
