@@ -1,0 +1,2 @@
+import Solvdle
+Solvdle.run()
